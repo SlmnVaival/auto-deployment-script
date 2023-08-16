@@ -12,7 +12,7 @@ let githubRepoVisibility;
 let progressBarActivity;
 let githubUserName;
 let gitCurrentRepoName;
-let repoAbsPathVar = '/Users/vaival/Documents/blockChain/devOps/auto-deploy';
+let repoAbsPathVar;
 
 const readline = readLine.createInterface({
     input: process.stdin, output: process.stdout,
@@ -60,7 +60,6 @@ askDockerPort = (container_name, image_url) => {
         onErrorBreak("No .env file exists");
     }
 }
-askDockerPort("test_container_name", 'slmnvaival/elsyimbridge-eventlistener-testing');
 writeDockerComposeFile = async (container_name, image_url, env_file_path, port) => {
     let dockerFileContent = fs.readFileSync("./docker-sample.yml", {encoding: 'utf8', flag: 'r'});
     dockerFileContent = dockerFileContent.replaceAll("${container_name}", container_name);
@@ -77,6 +76,8 @@ upDockerContainer = async () => {
     run_shell_command(`docker-compose up -d`).then(res => {
         removeProgressBar();
         showSuccessMsg();
+        console.log("delete directory", repoAbsPathVar);
+        // await deleteClonedRepo(repoAbsPath);
     })
 }
 
@@ -157,6 +158,7 @@ removeProgressBar = () => {
 
 // Build docker image.
 buildDockerImage = async (repoAbsPath) => {
+    repoAbsPathVar = repoAbsPath;
     if (fs.readFileSync(repoAbsPath + '/Dockerfile')) {
         // If docker file already exits in the folder
         readline.question("What's docker image name? ", async dockerImagePath => {
@@ -164,7 +166,7 @@ buildDockerImage = async (repoAbsPath) => {
                 showProgressBar("Building docker image....");
                 run_shell_command(`cd ${repoAbsPath} && docker build -t ${dockerImagePath}:latest .`).then(res => {
                     removeProgressBar();
-                    pushDockerImage(dockerImagePath, repoAbsPath);
+                    pushDockerImage(dockerImagePath);
                 })
             } else {
                 onErrorBreak("Docker Image name wasn't provided.");
@@ -184,12 +186,11 @@ deleteClonedRepo = async (repoAbsPath) => {
 
 
 // Push docker image to hub.
-pushDockerImage = async (dockerImagePath, repoAbsPath) => {
+pushDockerImage = async (dockerImagePath) => {
     showProgressBar("Pushing docker image...");
     await run_shell_command(`docker push ${dockerImagePath}:latest`).then(async res => {
         removeProgressBar();
-        await deleteClonedRepo(repoAbsPath);
-        showSuccessMsg();
+        askDockerPort(gitCurrentRepoName, dockerImagePath);
     })
 }
 
