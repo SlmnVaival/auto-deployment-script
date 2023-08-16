@@ -277,7 +277,6 @@ startProcess = async () => {
         await getGithubRepoDetails(githubApiURL);
     });
 }
-// startProcess();
-askForURBinding();
+startProcess();
 
 
