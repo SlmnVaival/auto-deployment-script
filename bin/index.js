@@ -76,8 +76,7 @@ upDockerContainer = async () => {
     run_shell_command(`docker-compose up -d`).then(res => {
         removeProgressBar();
         showSuccessMsg();
-        console.log("delete directory", repoAbsPathVar);
-        // await deleteClonedRepo(repoAbsPath);
+        deleteClonedRepo(repoAbsPathVar);
     })
 }
 
