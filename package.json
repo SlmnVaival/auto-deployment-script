@@ -1,5 +1,5 @@
 {
-  "name": "sulaman0/auto-deploy",
+  "name": "sulaman0-auto-deploy",
   "version": "1.0.0",
   "description": "This CLI fetch source code from private or public repo and deploy the application on docker ",
   "main": "bin/index.js",
