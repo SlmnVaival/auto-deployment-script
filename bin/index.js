@@ -11,7 +11,8 @@ let githubCloneURL;
 let githubRepoVisibility;
 let progressBarActivity;
 let githubUserName;
-let gitCurrentRepoName;
+let gitCurrentRepoName = 'testing';
+let exposePort;
 let repoAbsPathVar;
 
 const readline = readLine.createInterface({
@@ -41,9 +42,15 @@ getRepoName = async (githUrl) => {
     gitCurrentRepoName = repo_name.replaceAll('-', '_');
     return repo_name;
 }
+
+extractPosePost = (dockerInputPort) => {
+    let n = dockerInputPort.lastIndexOf(':');
+    return dockerInputPort.substring(0, n)
+}
 // show success message once every done.
 showSuccessMsg = () => {
     readline.write("\n Huu! Docker Build pushed to server \n");
+    deleteClonedRepo(repoAbsPathVar);
     process.exit(0);
 }
 askDockerPort = (container_name, image_url) => {
@@ -51,6 +58,7 @@ askDockerPort = (container_name, image_url) => {
     if (fs.existsSync(env_file_path)) {
         readline.question("What is the Expose Port:Incoming Port ", port => {
             if (port) {
+                exposePort = extractPosePost(port);
                 writeDockerComposeFile(container_name, image_url, env_file_path, port);
             } else {
                 askDockerPort(container_name, image_url);
@@ -76,7 +84,30 @@ upDockerContainer = async () => {
     run_shell_command(`docker-compose up -d`).then(res => {
         removeProgressBar();
         showSuccessMsg();
-        deleteClonedRepo(repoAbsPathVar);
+    })
+}
+
+askForURBinding = () => {
+    readline.question("What is the url you wants to build with? ", url => {
+        if (url) {
+            writeServerConfFile(url);
+        } else {
+            askForURBinding();
+        }
+    })
+}
+
+writeServerConfFile = (url) => {
+    let serverFileContent = fs.readFileSync("./ngix_service.conf", {encoding: 'utf8', flag: 'r'});
+    serverFileContent = serverFileContent.replace('${server_url}', url);
+    serverFileContent = serverFileContent.replace('${expose_port}', exposePort);
+    fs.writeFileSync(gitCurrentRepoName + ".conf", serverFileContent, err => {
+        onErrorBreak(err, "Writing server config file");
+    });
+    let currentFile = repoAbsPathVar + '/' + gitCurrentRepoName;
+    let targetFolder = '/etc/nginx/conf.d';
+    run_shell_command(`mv ${currentFile} ${targetFolder}`).then(res => {
+        showSuccessMsg();
     })
 }
 
@@ -246,6 +277,7 @@ startProcess = async () => {
         await getGithubRepoDetails(githubApiURL);
     });
 }
-startProcess();
+// startProcess();
+askForURBinding();
 
 
