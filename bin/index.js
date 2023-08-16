@@ -15,8 +15,7 @@ let gitCurrentRepoName;
 let repoAbsPathVar = '/Users/vaival/Documents/blockChain/devOps/auto-deploy';
 
 const readline = readLine.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+    input: process.stdin, output: process.stdout,
 });
 
 
@@ -27,8 +26,7 @@ async function run_shell_command(command) {
     } catch (ex) {
         onErrorBreak(ex);
     }
-    if (Error[Symbol.hasInstance](result))
-        return;
+    if (Error[Symbol.hasInstance](result)) return;
 
     return result;
 }
@@ -69,19 +67,16 @@ writeDockerComposeFile = async (container_name, image_url, env_file_path, port) 
     dockerFileContent = dockerFileContent.replace("${image_url}", image_url);
     dockerFileContent = dockerFileContent.replace("${env_file_path}", env_file_path);
     dockerFileContent = dockerFileContent.replace("${expose_port_incoming_port}", port);
-    fs.writeS("docker-compose.yml", dockerFileContent, err => {
-        if (err) {
-            onErrorBreak(err, "Writing docker-compose.yml file");
-        } else {
-            upDockerContainer();
-        }
+    fs.writeFileSync("docker-compose.yml", dockerFileContent, err => {
+        onErrorBreak(err, "Writing docker-compose.yml file");
     });
+    upDockerContainer();
 }
 upDockerContainer = async () => {
     showProgressBar("Doing to Up Docker container.");
     run_shell_command(`docker-compose up -d`).then(res => {
         removeProgressBar();
-
+        showSuccessMsg();
     })
 }
 
