@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  ${container_name}:
+    container_name: ${container_name}
+    image: ${image_url}
+    env_file:
+      - ${env_file_path}
+    ports:
+      - "${expose_port_incoming_port}"

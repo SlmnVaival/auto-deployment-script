@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+    elsyimbridge_eventlistener_testing:
+        container_name: elsyimbridge_eventlistener_testing
+        image: slmnvaival/elsyimbridge-eventlistener-testing
+        env_file:
+            - /Users/vaival/Documents/blockChain/devOps/auto-deploy/.env
+        ports:
+            - "12:3"

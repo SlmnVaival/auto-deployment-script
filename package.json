@@ -1,0 +1,21 @@
+{
+  "name": "auto-deploy",
+  "version": "1.0.0",
+  "description": "This CLI fetch source code from private or public repo and deploy the application on docker ",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "auto-deploy": "./bin/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "fs": "^0.0.1-security",
+    "inquirer": "^9.2.10",
+    "process": "^0.11.10",
+    "util": "^0.12.5"
+  }
+}
