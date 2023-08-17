@@ -1,6 +1,6 @@
 {
   "name": "auto-deploy-builds",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This CLI fetch source code from private or public repo and deploy the application on docker ",
   "main": "bin/index.js",
   "scripts": {
