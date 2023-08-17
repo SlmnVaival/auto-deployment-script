@@ -13,7 +13,7 @@ let progressBarActivity;
 let githubUserName;
 let gitCurrentRepoName = 'testing';
 let exposePort;
-let repoAbsPathVar;
+let repoAbsPathVar = '/Users/vaival/Documents/blockChain/devOps/auto-deploy';
 
 const readline = readLine.createInterface({
     input: process.stdin, output: process.stdout,
@@ -50,7 +50,7 @@ extractPosePost = (dockerInputPort) => {
 // show success message once every done.
 showSuccessMsg = () => {
     readline.write("\n Huu! Docker Build pushed to server \n");
-    deleteClonedRepo(repoAbsPathVar);
+    // deleteClonedRepo(repoAbsPathVar);
     process.exit(0);
 }
 askDockerPort = (container_name, image_url) => {
@@ -82,8 +82,7 @@ writeDockerComposeFile = async (container_name, image_url, env_file_path, port) 
 upDockerContainer = async () => {
     showProgressBar("Doing to Up Docker container.");
     run_shell_command(`docker-compose up -d`).then(res => {
-        removeProgressBar();
-        showSuccessMsg();
+        askForURBinding();
     })
 }
 
@@ -104,8 +103,11 @@ writeServerConfFile = (url) => {
     fs.writeFileSync(gitCurrentRepoName + ".conf", serverFileContent, err => {
         onErrorBreak(err, "Writing server config file");
     });
-    let currentFile = repoAbsPathVar + '/' + gitCurrentRepoName;
+    let currentFile = repoAbsPathVar + '/' + gitCurrentRepoName + '.conf';
     let targetFolder = '/etc/nginx/conf.d';
+    if (!fs.existsSync(targetFolder)) {
+        fs.mkdirSync(targetFolder, {recursive: true});
+    }
     run_shell_command(`mv ${currentFile} ${targetFolder}`).then(res => {
         showSuccessMsg();
     })
@@ -278,5 +280,6 @@ startProcess = async () => {
     });
 }
 startProcess();
+// askForURBinding();
 
 

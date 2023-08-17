@@ -1,6 +1,6 @@
 {
   "name": "sulaman0-auto-deploy",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "This CLI fetch source code from private or public repo and deploy the application on docker ",
   "main": "bin/index.js",
   "scripts": {
